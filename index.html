@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Grouping</title>
+</head>
+<body>
+  <label for="groups">Number of groups:
+    <input type="number" name="groups" id="groups" />
+  </label>
+  <br />
+  <!--<button onclick="testPullOut()">Test pullOut</button><br />-->
+  <label for="list">
+    List your group names:
+    <br />
+    <textarea name="list" rows="8" cols="40"></textarea>
+  </label>
+  <br />
+  <button onclick="group()">Run Grouping</button>
+  <p></p>
+  <script type="text/javascript" charset="utf-8">
+    function group() {
+      let numberOfGroups = Number(document.querySelector('input[name="groups"]').value);
+      console.log("Number of groups:", numberOfGroups, typeof numberOfGroups)
+      let people = document.querySelector('textarea')
+      .value
+      .split("\n")
+      .filter(elt => !/^\s*$/.test(elt));
+      console.log(people)
+
+      let list = "";
+      let groupNumber = 1;
+      let maxNumPerGroup = Math.ceil(people.length / numberOfGroups);
+
+      while (people.length > 0) {
+        list += `<strong>Group ${groupNumber}</strong> <br/>`;
+
+        for (let i = 0; i < maxNumPerGroup && people.length > 0; i++) {
+          let [person,
+            resultingArray] = pullOut(people, Math.floor(Math.random() * people.length))
+          console.log("\nPerson: ", person, "\nRemaining:", resultingArray)
+          people = resultingArray;
+          list += `${person} <br/>`;
+        }
+
+        groupNumber++
+        list += "<br/>"
+      }
+
+      document.querySelector("p").innerHTML = list
+    }
+    function pullOut(array, index) {
+      console.log("Array:", array, "Index:", index)
+      let returnValue = [array[index],
+        [...array.slice(0, index),
+          ...array.slice(index + 1)]]
+      console.log(returnValue)
+      return returnValue
+    }
+    function testPullOut() {
+      console.log("pullOut([1, 2, 3, 4, 5], 2) =", pullOut(["1", "2", "3", "4", "5"], 2))
+    }
+  </script>
+</body>
+</html>
